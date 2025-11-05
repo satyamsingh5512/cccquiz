@@ -9,7 +9,7 @@ import { BookOpen, Trophy, Users, Lock } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
 
   useEffect(() => {
     fetchQuizzes();

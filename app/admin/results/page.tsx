@@ -11,11 +11,11 @@ import { ArrowLeft, Download, Search, Trophy } from 'lucide-react';
 export default function ResultsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [attempts, setAttempts] = useState([]);
-  const [filteredAttempts, setFilteredAttempts] = useState([]);
+  const [attempts, setAttempts] = useState<any[]>([]);
+  const [filteredAttempts, setFilteredAttempts] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterQuiz, setFilterQuiz] = useState('all');
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session && !session.user?.isAdmin)) {

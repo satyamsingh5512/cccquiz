@@ -11,7 +11,7 @@ import { Plus, List, BarChart } from 'lucide-react';
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [quizzes, setQuizzes] = useState([]);
+  const [quizzes, setQuizzes] = useState<any[]>([]);
   const [showCreateQuiz, setShowCreateQuiz] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
