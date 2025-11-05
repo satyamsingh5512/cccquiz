@@ -16,7 +16,8 @@ export async function GET() {
 
     return NextResponse.json(quizzes);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch quizzes' }, { status: 500 });
+    console.error('Error fetching quizzes:', error);
+    return NextResponse.json({ error: 'Failed to fetch quizzes', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
 

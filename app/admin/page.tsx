@@ -29,9 +29,19 @@ export default function AdminPage() {
   }, []);
 
   const fetchQuizzes = async () => {
-    const res = await fetch('/api/quizzes');
-    const data = await res.json();
-    setQuizzes(data);
+    try {
+      const res = await fetch('/api/quizzes');
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setQuizzes(data);
+      } else {
+        console.error('Invalid data format:', data);
+        setQuizzes([]);
+      }
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+      setQuizzes([]);
+    }
   };
 
   const createQuiz = async (e: React.FormEvent) => {
