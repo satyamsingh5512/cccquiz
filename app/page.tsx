@@ -15,6 +15,7 @@ import {
   Compass,
   BookMarked,
 } from 'lucide-react';
+import Footer from '@/components/Footer';
 import type { Quiz } from '@/types/quiz';
 
 type RawQuiz = (Quiz & { _id?: string | { $oid?: string }; createdAt?: string | Date }) | Record<string, unknown>;
@@ -388,6 +389,7 @@ export default function Home() {
           </div>
         </motion.section>
       </main>
+      <Footer />
     </div>
   );
 }
