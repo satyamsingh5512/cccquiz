@@ -138,7 +138,7 @@ export default function AdminPage() {
             disabled={testingDb}
             className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <BarChart size={20} />
+            <Database size={20} />
             <span>{testingDb ? 'Testing...' : 'Test Database'}</span>
           </button>
         </div>
