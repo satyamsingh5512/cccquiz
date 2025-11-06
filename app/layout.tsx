@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Cloud Computing Club - Quiz Platform',
-  description: 'Modern quiz platform by Satym',
+  description: 'Modern quiz platform for the Cloud Computing Club',
 };
 
 export default function RootLayout({

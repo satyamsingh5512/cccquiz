@@ -63,7 +63,6 @@ export default function SignIn() {
             Admin Login
           </h1>
           <p className="text-gray-600 dark:text-gray-300">Cloud Computing Club Quiz Platform</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">by Satym</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

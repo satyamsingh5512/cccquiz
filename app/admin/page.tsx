@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Plus, List, BarChart } from 'lucide-react';
+import { Plus, List } from 'lucide-react';
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -17,6 +17,7 @@ export default function AdminPage() {
   const [description, setDescription] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [timeLimit, setTimeLimit] = useState(0);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session && !session.user?.isAdmin)) {
@@ -46,6 +47,7 @@ export default function AdminPage() {
 
   const createQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFeedback(null);
     const res = await fetch('/api/quizzes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -53,12 +55,16 @@ export default function AdminPage() {
     });
 
     if (res.ok) {
+      setFeedback({ type: 'success', message: 'Quiz created successfully.' });
       setTitle('');
       setDescription('');
       setAccessCode('');
       setTimeLimit(0);
       setShowCreateQuiz(false);
       fetchQuizzes();
+    } else {
+      const errorData = await res.json().catch(() => ({ error: 'Failed to create quiz' }));
+      setFeedback({ type: 'error', message: errorData.error ?? 'Failed to create quiz.' });
     }
   };
 
@@ -75,7 +81,7 @@ export default function AdminPage() {
       <AnimatedBackground />
       <Navbar />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -91,7 +97,10 @@ export default function AdminPage() {
 
         <div className="mb-8 flex space-x-4">
           <button
-            onClick={() => setShowCreateQuiz(!showCreateQuiz)}
+            onClick={() => {
+              setShowCreateQuiz(!showCreateQuiz);
+              setFeedback(null);
+            }}
             className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition"
           >
             <Plus size={20} />
@@ -172,6 +181,17 @@ export default function AdminPage() {
                 Create Quiz
               </button>
             </form>
+            {feedback && (
+              <div
+                className={`mt-4 rounded-lg border px-4 py-3 text-sm ${
+                  feedback.type === 'success'
+                    ? 'border-green-500/40 bg-green-50 text-green-700 dark:border-green-400/30 dark:bg-green-900/20 dark:text-green-300'
+                    : 'border-red-500/40 bg-red-50 text-red-700 dark:border-red-400/30 dark:bg-red-900/20 dark:text-red-300'
+                }`}
+              >
+                {feedback.message}
+              </div>
+            )}
           </motion.div>
         )}
 
