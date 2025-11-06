@@ -38,6 +38,29 @@ export default function ManageQuizPage() {
     setQuestions(data);
   };
 
+  const deleteQuestion = async (questionId: string) => {
+    if (!confirm('Are you sure you want to delete this question?')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/questions/${questionId}/delete`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        alert('Question deleted successfully!');
+        fetchQuestions();
+      } else {
+        const data = await res.json();
+        alert(`Failed to delete question: ${data.error}`);
+      }
+    } catch (error) {
+      alert('Error deleting question');
+      console.error(error);
+    }
+  };
+
   const addQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await fetch('/api/questions', {
@@ -178,6 +201,13 @@ export default function ManageQuizPage() {
                 <h3 className="text-xl font-bold flex-1">
                   {index + 1}. {q.question}
                 </h3>
+                <button
+                  onClick={() => deleteQuestion(q._id)}
+                  className="flex items-center space-x-1 px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm"
+                >
+                  <Trash2 size={16} />
+                  <span>Delete</span>
+                </button>
               </div>
               <div className="space-y-2">
                 {q.options.map((option: string, optIndex: number) => (

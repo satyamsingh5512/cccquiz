@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Plus, List, Database } from 'lucide-react';
+import { Plus, List, Database, Trash2 } from 'lucide-react';
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -62,6 +62,29 @@ export default function AdminPage() {
       });
     } finally {
       setTestingDb(false);
+    }
+  };
+
+  const deleteQuiz = async (quizId: string) => {
+    if (!confirm('Are you sure you want to delete this quiz? This will also delete all questions and attempts.')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/quizzes/${quizId}/delete`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        alert('Quiz deleted successfully!');
+        fetchQuizzes();
+      } else {
+        const data = await res.json();
+        alert(`Failed to delete quiz: ${data.error}`);
+      }
+    } catch (error) {
+      alert('Error deleting quiz');
+      console.error(error);
     }
   };
 
@@ -331,6 +354,13 @@ export default function AdminPage() {
                   >
                     <List size={18} />
                     <span>Manage Questions</span>
+                  </button>
+                  <button
+                    onClick={() => deleteQuiz(quiz._id)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  >
+                    <Trash2 size={18} />
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
