@@ -71,7 +71,7 @@ export default function AdminPage() {
     }
 
     try {
-      const res = await fetch(`/api/quizzes/${quizId}/delete`, {
+      const res = await fetch(`/api/quizzes/delete?id=${quizId}`, {
         method: 'DELETE',
       });
 

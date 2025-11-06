@@ -44,7 +44,7 @@ export default function ManageQuizPage() {
     }
 
     try {
-      const res = await fetch(`/api/questions/${questionId}/delete`, {
+      const res = await fetch(`/api/questions/delete?id=${questionId}`, {
         method: 'DELETE',
       });
 
