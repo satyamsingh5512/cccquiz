@@ -333,9 +333,18 @@ export default function AdminPage() {
                   </p>
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="text-sm font-medium text-gray-500">Access Code:</span>
-                    <code className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded font-mono font-bold">
+                    <code className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded font-mono font-bold select-all">
                       {quiz.accessCode}
                     </code>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(quiz.accessCode);
+                        alert('Access code copied to clipboard!');
+                      }}
+                      className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition"
+                    >
+                      Copy
+                    </button>
                   </div>
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="text-sm font-medium text-gray-500">Time Limit:</span>
