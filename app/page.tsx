@@ -329,8 +329,9 @@ export default function Home() {
                   className="group flex h-full flex-col justify-between rounded-3xl border border-white/40 bg-white/80 p-6 shadow-xl shadow-blue-500/5 transition hover:-translate-y-1 hover:shadow-blue-500/30 backdrop-blur dark:border-white/10 dark:bg-gray-900/70"
                 >
                   <div>
-                    <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-blue-600 dark:text-blue-300">
-                      Access code: {quiz.accessCode || 'Pending'}
+                    <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-purple-600 dark:text-purple-300">
+                      <ShieldCheck size={14} />
+                      <span>Secure Access</span>
                     </div>
                     <h3 className="mt-4 text-2xl font-semibold text-gray-900 transition group-hover:text-blue-600 dark:text-white">
                       {quiz.title}
