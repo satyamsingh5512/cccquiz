@@ -47,6 +47,24 @@ export default function AdminPage() {
     }
   };
 
+  const testDatabase = async () => {
+    setTestingDb(true);
+    setDbTestResult(null);
+    try {
+      const res = await fetch('/api/test-db');
+      const data = await res.json();
+      setDbTestResult(data);
+    } catch (error) {
+      setDbTestResult({
+        success: false,
+        error: 'Failed to test database',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      });
+    } finally {
+      setTestingDb(false);
+    }
+  };
+
   const createQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     setFeedback(null);
@@ -97,7 +115,7 @@ export default function AdminPage() {
           </p>
         </motion.div>
 
-        <div className="mb-8 flex space-x-4">
+        <div className="mb-8 flex flex-wrap gap-4">
           <button
             onClick={() => {
               setShowCreateQuiz(!showCreateQuiz);
@@ -114,6 +132,14 @@ export default function AdminPage() {
           >
             <List size={20} />
             <span>View All Results</span>
+          </button>
+          <button
+            onClick={testDatabase}
+            disabled={testingDb}
+            className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <BarChart size={20} />
+            <span>{testingDb ? 'Testing...' : 'Test Database'}</span>
           </button>
         </div>
 
