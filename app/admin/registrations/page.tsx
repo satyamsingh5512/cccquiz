@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Download, Search, UserPlus, Trash2, Users } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 export default function RegistrationsPage() {
   const { data: session, status } = useSession();
@@ -380,6 +381,7 @@ export default function RegistrationsPage() {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

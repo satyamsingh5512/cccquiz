@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import { Plus, List, Database, Trash2 } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -384,6 +385,7 @@ export default function AdminPage() {
           ))}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

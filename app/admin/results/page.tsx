@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Download, Search, Trophy } from 'lucide-react';
+import Footer from '@/components/Footer';
 
 export default function ResultsPage() {
   const { data: session, status } = useSession();
@@ -261,6 +262,7 @@ export default function ResultsPage() {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
