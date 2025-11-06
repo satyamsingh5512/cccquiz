@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Plus, List } from 'lucide-react';
+import { Plus, List, Database } from 'lucide-react';
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
