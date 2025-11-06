@@ -153,30 +153,6 @@ export default function Home() {
       <AnimatedBackground />
       <Navbar />
 
-      {/* Maintenance Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative z-10 border-b border-yellow-500/30 bg-gradient-to-r from-yellow-50 via-orange-50 to-yellow-50 px-4 py-4 dark:from-yellow-900/20 dark:via-orange-900/20 dark:to-yellow-900/20"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="flex items-center justify-center gap-3 text-center">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-500/20">
-              <Sparkles className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-200">
-                🔧 Site Under Maintenance
-              </p>
-              <p className="text-xs text-yellow-700 dark:text-yellow-300">
-                We're making improvements. Some features may be temporarily unavailable.
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
       <main className="relative mx-auto max-w-7xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
         <motion.section
           initial={{ opacity: 0, y: 24 }}
