@@ -17,6 +17,8 @@ export default function AdminPage() {
   const [description, setDescription] = useState('');
   const [accessCode, setAccessCode] = useState('');
   const [timeLimit, setTimeLimit] = useState(0);
+  const [testingDb, setTestingDb] = useState(false);
+  const [dbTestResult, setDbTestResult] = useState<any>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
@@ -114,6 +116,76 @@ export default function AdminPage() {
             <span>View All Results</span>
           </button>
         </div>
+
+        {dbTestResult && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-8 p-6 rounded-2xl shadow-xl ${
+              dbTestResult.success
+                ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500'
+                : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'
+            }`}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <h3 className={`text-xl font-bold ${
+                dbTestResult.success ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400'
+              }`}>
+                {dbTestResult.success ? '✅ Database Connected' : '❌ Database Connection Failed'}
+              </h3>
+              <button
+                onClick={() => setDbTestResult(null)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+              >
+                ✕
+              </button>
+            </div>
+            
+            {dbTestResult.success ? (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <strong>Message:</strong> {dbTestResult.message}
+                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <strong>Response Time:</strong> {dbTestResult.stats.responseTime}
+                </p>
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                    <p className="text-2xl font-bold text-blue-600">{dbTestResult.stats.quizzes}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Quizzes</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                    <p className="text-2xl font-bold text-purple-600">{dbTestResult.stats.questions}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Questions</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+                    <p className="text-2xl font-bold text-green-600">{dbTestResult.stats.attempts}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Attempts</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  Collections: {dbTestResult.stats.collections.join(', ')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-red-700 dark:text-red-400">
+                  <strong>Error:</strong> {dbTestResult.error}
+                </p>
+                <p className="text-sm text-red-600 dark:text-red-300 font-mono bg-red-100 dark:bg-red-900/30 p-3 rounded">
+                  {dbTestResult.details}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                  Check your MONGODB_URI environment variable in Vercel settings.
+                </p>
+              </div>
+            )}
+            
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
+              Tested at: {new Date(dbTestResult.timestamp).toLocaleString()}
+            </p>
+          </motion.div>
+        )}
 
         {showCreateQuiz && (
           <motion.div
