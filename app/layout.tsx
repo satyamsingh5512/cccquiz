@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from './providers';
+import MaintenanceWrapper from '@/components/MaintenanceWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} flex flex-col min-h-screen`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <MaintenanceWrapper>{children}</MaintenanceWrapper>
+        </Providers>
       </body>
     </html>
   );

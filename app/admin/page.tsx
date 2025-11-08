@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Navbar from '@/components/Navbar';
 import { motion } from 'framer-motion';
-import { Plus, List, Database, Trash2 } from 'lucide-react';
+import { Plus, List, Database, Trash2, Wrench } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 export default function AdminPage() {
@@ -21,6 +21,8 @@ export default function AdminPage() {
   const [testingDb, setTestingDb] = useState(false);
   const [dbTestResult, setDbTestResult] = useState<any>(null);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [togglingMaintenance, setTogglingMaintenance] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated' || (session && !session.user?.isAdmin)) {
@@ -30,7 +32,46 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchQuizzes();
+    checkMaintenanceMode();
   }, []);
+
+  const checkMaintenanceMode = async () => {
+    try {
+      const res = await fetch('/api/maintenance');
+      const data = await res.json();
+      setMaintenanceMode(data.maintenanceMode);
+    } catch (error) {
+      console.error('Error checking maintenance mode:', error);
+    }
+  };
+
+  const toggleMaintenanceMode = async () => {
+    setTogglingMaintenance(true);
+    try {
+      const res = await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !maintenanceMode }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setMaintenanceMode(data.maintenanceMode);
+        alert(
+          data.maintenanceMode
+            ? 'Maintenance mode enabled. Site is now showing maintenance page to visitors.'
+            : 'Maintenance mode disabled. Site is now accessible to all visitors.'
+        );
+      } else {
+        alert('Failed to toggle maintenance mode');
+      }
+    } catch (error) {
+      console.error('Error toggling maintenance mode:', error);
+      alert('Error toggling maintenance mode');
+    } finally {
+      setTogglingMaintenance(false);
+    }
+  };
 
   const fetchQuizzes = async () => {
     try {
@@ -171,6 +212,24 @@ export default function AdminPage() {
           >
             <Database size={20} />
             <span>{testingDb ? 'Testing...' : 'Test Database'}</span>
+          </button>
+          <button
+            onClick={toggleMaintenanceMode}
+            disabled={togglingMaintenance}
+            className={`flex items-center space-x-2 px-6 py-3 text-white rounded-lg hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${
+              maintenanceMode
+                ? 'bg-gradient-to-r from-green-600 to-emerald-600'
+                : 'bg-gradient-to-r from-orange-600 to-red-600'
+            }`}
+          >
+            <Wrench size={20} />
+            <span>
+              {togglingMaintenance
+                ? 'Toggling...'
+                : maintenanceMode
+                ? 'Disable Maintenance'
+                : 'Enable Maintenance'}
+            </span>
           </button>
         </div>
 
