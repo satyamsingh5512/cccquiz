@@ -1,16 +1,19 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import fs from 'fs';
-import path from 'path';
-
-const MAINTENANCE_FILE = path.join(process.cwd(), '.maintenance');
+import clientPromise from '@/lib/mongodb';
 
 export async function GET() {
   try {
-    const isMaintenanceMode = fs.existsSync(MAINTENANCE_FILE);
+    const client = await clientPromise;
+    const db = client.db('quizdb');
+    
+    const settings = await db.collection('settings').findOne({ key: 'maintenance' });
+    const isMaintenanceMode = settings?.enabled || false;
+    
     return NextResponse.json({ maintenanceMode: isMaintenanceMode });
   } catch (error) {
+    console.error('Error checking maintenance mode:', error);
     return NextResponse.json({ maintenanceMode: false });
   }
 }
@@ -24,21 +27,27 @@ export async function POST(request: Request) {
 
   try {
     const { enabled } = await request.json();
-
-    if (enabled) {
-      // Create maintenance file
-      fs.writeFileSync(MAINTENANCE_FILE, new Date().toISOString());
-    } else {
-      // Remove maintenance file
-      if (fs.existsSync(MAINTENANCE_FILE)) {
-        fs.unlinkSync(MAINTENANCE_FILE);
-      }
-    }
+    
+    const client = await clientPromise;
+    const db = client.db('quizdb');
+    
+    await db.collection('settings').updateOne(
+      { key: 'maintenance' },
+      { 
+        $set: { 
+          enabled,
+          updatedAt: new Date(),
+          updatedBy: session.user.email
+        } 
+      },
+      { upsert: true }
+    );
 
     return NextResponse.json({ success: true, maintenanceMode: enabled });
   } catch (error) {
+    console.error('Error toggling maintenance mode:', error);
     return NextResponse.json(
-      { error: 'Failed to toggle maintenance mode' },
+      { error: 'Failed to toggle maintenance mode', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
