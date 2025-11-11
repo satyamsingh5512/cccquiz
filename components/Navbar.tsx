@@ -40,26 +40,19 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/40 bg-white/80 shadow-md shadow-blue-500/20 backdrop-blur dark:border-white/10 dark:bg-gray-900/70">
+            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/40 bg-gradient-to-br from-blue-500 to-purple-600 shadow-md shadow-blue-500/20 backdrop-blur dark:border-white/10">
               <motion.div
-                className="absolute inset-0"
+                className="absolute inset-0 flex items-center justify-center"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
               >
-                <Image
-                  src="https://www.cloudcomputingclub.co.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fclub_logo.edc6af2c.png&w=64&q=75"
-                  alt="Cloud Computing Club logo"
-                  fill
-                  sizes="44px"
-                  priority
-                  className="object-contain p-1"
-                />
+                <Sparkles className="h-6 w-6 text-white" />
               </motion.div>
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                Cloud Computing Club
+                Quizo
               </p>
             </div>
           </Link>

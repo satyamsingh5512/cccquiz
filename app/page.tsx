@@ -15,7 +15,6 @@ import {
   Compass,
   BookMarked,
 } from 'lucide-react';
-import Footer from '@/components/Footer';
 import type { Quiz } from '@/types/quiz';
 
 type RawQuiz = (Quiz & { _id?: string | { $oid?: string }; createdAt?: string | Date }) | Record<string, unknown>;
@@ -162,7 +161,7 @@ export default function Home() {
         >
           <div className="space-y-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-blue-600 shadow-sm backdrop-blur dark:bg-gray-900/60 dark:text-blue-300">
-              <Sparkles size={14} /> Cloud Computing Club
+              <Sparkles size={14} /> Quizo
             </span>
             <h1 className="text-4xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
               Elevate learning with immersive, data-driven quiz experiences.
@@ -389,7 +388,6 @@ export default function Home() {
           </div>
         </motion.section>
       </main>
-      <Footer />
     </div>
   );
 }

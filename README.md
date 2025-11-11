@@ -1,4 +1,4 @@
-# Cloud Computing Club - Quiz Platform
+# Quiz Platform
 
 A modern, full-stack quiz platform built with Next.js 14, featuring secure admin authentication, quiz management, and beautiful dark/light mode UI with animated backgrounds.
 
@@ -182,6 +182,5 @@ MIT License - feel free to use this project for learning or production.
 
 ---
 
-**Made with ❤️ by Satym for Cloud Computing Club**
-# cccquiz
+**Made with ❤️ by Satym**
 # Trigger redeploy

@@ -1,7 +1,7 @@
 {
-  "name": "cloud-computing-club-quiz",
+  "name": "quiz-platform",
   "version": "1.0.0",
-  "description": "Modern quiz platform for Cloud Computing Club",
+  "description": "Modern quiz platform for interactive assessments",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

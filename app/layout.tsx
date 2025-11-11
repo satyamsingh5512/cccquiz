@@ -2,13 +2,12 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Providers } from './providers';
-import MaintenanceWrapper from '@/components/MaintenanceWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Cloud Computing Club - Quiz Platform',
-  description: 'Modern quiz platform for the Cloud Computing Club',
+  title: 'Quizo - Interactive Quiz Platform',
+  description: 'Modern quiz platform for interactive assessments',
 };
 
 export default function RootLayout({
@@ -18,10 +17,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
-        <Providers>
-          <MaintenanceWrapper>{children}</MaintenanceWrapper>
-        </Providers>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

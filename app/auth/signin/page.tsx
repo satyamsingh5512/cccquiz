@@ -62,7 +62,7 @@ export default function SignIn() {
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Admin Login
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">Cloud Computing Club Quiz Platform</p>
+          <p className="text-gray-600 dark:text-gray-300">Quizo - Interactive Quiz Platform</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
