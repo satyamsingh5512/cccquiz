@@ -20,7 +20,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
     
     const result = await db.collection('questions').deleteOne({ 
       _id: new ObjectId(questionId) 

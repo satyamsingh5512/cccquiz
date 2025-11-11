@@ -20,7 +20,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
     
     // Delete all questions for this quiz
     await db.collection('questions').deleteMany({ quizId: quizId });

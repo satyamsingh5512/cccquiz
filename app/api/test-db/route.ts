@@ -15,7 +15,7 @@ export async function GET() {
     
     // Test MongoDB connection
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
     
     // Get database stats
     const collections = await db.listCollections().toArray();

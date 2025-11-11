@@ -6,7 +6,7 @@ import clientPromise from '@/lib/mongodb';
 export async function GET() {
   try {
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
     
     const quizzes = await db
       .collection('quizzes')
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
 
     const quiz = {
       title: body.title,

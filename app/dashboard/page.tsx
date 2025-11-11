@@ -65,9 +65,11 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Welcome, {session.user.name}!
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {session.user.organization}
-          </p>
+          {session.user.organization && session.user.organization !== 'Individual' && (
+            <p className="text-gray-600 dark:text-gray-300">
+              {session.user.organization}
+            </p>
+          )}
         </motion.div>
 
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

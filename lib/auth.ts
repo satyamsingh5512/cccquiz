@@ -77,13 +77,21 @@ export const authOptions: NextAuthOptions = {
             // Create new user from Google
             await db.collection('users').insertOne({
               email: user.email,
-              name: user.name,
+              name: user.name || '',
               googleId: account.providerAccountId,
               image: user.image,
-              organization: '', // Will be set on first login
+              organization: '', // Will be set during onboarding
+              college: '',
+              clubName: '',
               role: 'user',
               createdAt: new Date(),
             });
+          } else if (!existingUser.name && user.name) {
+            // Update name if it wasn't set before
+            await db.collection('users').updateOne(
+              { email: user.email },
+              { $set: { name: user.name } }
+            );
           }
         } catch (error) {
           console.error('Error creating user:', error);

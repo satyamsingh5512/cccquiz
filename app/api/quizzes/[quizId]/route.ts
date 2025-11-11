@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const client = await clientPromise;
-    const db = client.db('quiz-platform');
+    const db = client.db('quizdb');
     
     const quiz = await db
       .collection('quizzes')
