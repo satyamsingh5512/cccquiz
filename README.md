@@ -1,4 +1,4 @@
-# Quiz Platform
+# Quizo - Interactive Quiz Platform
 
 A modern, full-stack quiz platform built with Next.js 14, featuring secure admin authentication, quiz management, and beautiful dark/light mode UI with animated backgrounds.
 
