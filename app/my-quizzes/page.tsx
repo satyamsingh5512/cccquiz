@@ -116,7 +116,7 @@ export default function MyQuizzesPage() {
                     View
                   </button>
                   <button
-                    onClick={() => router.push(`/admin/quiz/${quiz._id}`)}
+                    onClick={() => router.push(`/quiz/${quiz._id}/manage`)}
                     className="flex-1 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:shadow-lg"
                   >
                     Manage

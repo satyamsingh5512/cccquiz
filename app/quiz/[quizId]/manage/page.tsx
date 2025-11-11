@@ -46,15 +46,26 @@ export default function ManageQuizPage() {
         fetch(`/api/attempts?quizId=${quizId}`),
       ]);
 
+      if (!quizRes.ok) {
+        console.error('Failed to fetch quiz:', await quizRes.text());
+        setQuiz(null);
+        return;
+      }
+
       const quizData = await quizRes.json();
-      const questionsData = await questionsRes.json();
-      const attemptsData = await attemptsRes.json();
+      const questionsData = questionsRes.ok ? await questionsRes.json() : [];
+      const attemptsData = attemptsRes.ok ? await attemptsRes.json() : [];
+
+      console.log('Quiz data:', quizData);
+      console.log('Questions:', questionsData);
+      console.log('Attempts:', attemptsData);
 
       setQuiz(quizData);
       setQuestions(Array.isArray(questionsData) ? questionsData : []);
       setAttempts(Array.isArray(attemptsData) ? attemptsData : []);
     } catch (error) {
       console.error('Error fetching quiz data:', error);
+      setQuiz(null);
     } finally {
       setLoading(false);
     }
