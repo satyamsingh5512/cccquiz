@@ -1,186 +1,229 @@
 # Quizo - Interactive Quiz Platform
 
-A modern, full-stack quiz platform built with Next.js 14, featuring secure admin authentication, quiz management, and beautiful dark/light mode UI with animated backgrounds.
+A modern, full-stack quiz platform built with Next.js 14, featuring Google OAuth authentication, real-time quiz management, and a beautiful UI.
 
-**Made by Satym**
+## ✨ Features
 
-## Features
+### 🔐 Authentication
+- **Google OAuth Integration** - Sign in with Google for seamless authentication
+- **Email/Password Login** - Traditional authentication for admin users
+- **User Onboarding** - Collect user profile information (name, college, club)
+- **Session Management** - Secure JWT-based sessions with NextAuth.js
 
-- 🔐 **Admin Authentication** - Secure email/password authentication for admin access
-- 🔑 **Access Code System** - Secure quiz access with unique codes per quiz
-- ⏱️ **Timer Management** - Set time limits for quizzes with live countdown
-- 👨‍💼 **Admin Dashboard** - Create and manage quizzes with custom access codes
-- 📊 **Results Analytics** - Comprehensive dashboard with filtering, search, and CSV export
-- 📝 **Interactive Quiz Taking** - Smooth, animated quiz experience for all users
-- 👤 **User Information Collection** - Collect name, email, and roll number for records
-- 🌓 **Dark/Light Mode** - Beautiful animated backgrounds in both themes
-- 🎨 **Modern UI** - Built with Tailwind CSS and Framer Motion
-- 📱 **Responsive Design** - Works on all devices
-- 📈 **Performance Tracking** - View scores, percentages, and statistics
-- 🚨 **Auto-Submit** - Quizzes automatically submit when time expires
+### 📝 Quiz Management
+- **Create Quizzes** - Easy-to-use interface for creating quizzes with multiple questions
+- **Custom Access Codes** - Set custom or auto-generated access codes for quiz access
+- **Question Builder** - Add multiple-choice questions with 4 options
+- **Quiz Organization** - Organize quizzes by college and club affiliation
+- **My Quizzes** - View and manage all your created quizzes
 
-## Tech Stack
+### 🎯 Quiz Taking
+- **Browse Quizzes** - Discover quizzes from different colleges and clubs
+- **Search Functionality** - Find quizzes by title or description
+- **Access Code Entry** - Secure quiz access with unique codes
+- **Real-time Feedback** - Instant results after quiz completion
 
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS, Framer Motion
-- **Authentication**: NextAuth.js with Credentials Provider
-- **Database**: MongoDB
-- **Icons**: Lucide React
+### 👥 User Features
+- **User Dashboard** - Personalized dashboard with quick actions
+- **Profile Management** - Update name, college, and club information
+- **Quiz History** - Track your quiz attempts and scores
+- **Leaderboards** - View top performers (coming soon)
 
-## Setup Instructions
+### 🎨 UI/UX
+- **Modern Design** - Beautiful gradient backgrounds and animations
+- **Dark Mode Support** - Automatic dark/light theme switching
+- **Responsive Layout** - Works perfectly on desktop, tablet, and mobile
+- **Smooth Animations** - Framer Motion powered transitions
+- **Glass Morphism** - Modern glassmorphic design elements
 
-### 1. Install Dependencies
+### 🔧 Admin Features
+- **Admin Dashboard** - Comprehensive admin panel
+- **Quiz Management** - Edit, delete, and manage all quizzes
+- **User Management** - View and manage user accounts
+- **Analytics** - Track quiz participation and performance
+- **Maintenance Mode** - Enable/disable platform access
 
+### 🛠️ Technical Features
+- **Next.js 14** - Latest App Router with Server Components
+- **TypeScript** - Full type safety throughout the application
+- **MongoDB** - Scalable NoSQL database with Mongoose ODM
+- **Tailwind CSS** - Utility-first CSS framework
+- **NextAuth.js** - Complete authentication solution
+- **API Routes** - RESTful API endpoints
+- **Environment Variables** - Secure configuration management
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ installed
+- MongoDB Atlas account (or local MongoDB)
+- Google Cloud Console project (for OAuth)
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/satyamsingh5512/cccquiz.git
+cd cccquiz
+```
+
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
-### 2. Set Up MongoDB
-
-You can use either:
-- **Local MongoDB**: Install MongoDB locally
-- **MongoDB Atlas**: Create a free cluster at [mongodb.com/atlas](https://www.mongodb.com/atlas)
-
-### 3. Configure Environment Variables
+3. **Set up environment variables**
 
 Create a `.env.local` file in the root directory:
 
 ```env
-# MongoDB Connection
-MONGODB_URI=mongodb://localhost:27017/quiz-platform
-# or MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/quiz-platform
+# MongoDB
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/quizdb?retryWrites=true&w=majority
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_random_secret_here
+NEXTAUTH_SECRET=your-secret-key-here
 
-# Admin Credentials
-ADMIN_EMAIL=ss2628681@gmail.com
-ADMIN_PASSWORD=your_secure_password_here
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Admin Credentials (optional)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=your-admin-password
 ```
 
-To generate `NEXTAUTH_SECRET`, run:
+4. **Generate NextAuth Secret**
 ```bash
 openssl rand -base64 32
 ```
 
-**Important**: Set a strong password for `ADMIN_PASSWORD`!
+5. **Set up Google OAuth**
+- Go to [Google Cloud Console](https://console.cloud.google.com/)
+- Create a new project
+- Enable Google+ API
+- Create OAuth 2.0 credentials
+- Add authorized redirect URIs:
+  - `http://localhost:3000/api/auth/callback/google`
+  - `https://your-domain.vercel.app/api/auth/callback/google`
 
-### 4. Run the Development Server
-
+6. **Run the development server**
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+7. **Open your browser**
+Navigate to [http://localhost:3000](http://localhost:3000)
 
-## Usage
-
-### For Admin
-
-1. Click "Admin Login" in the navbar
-2. Sign in with your admin email and password
-3. Access the admin dashboard
-4. **Create Quiz**: 
-   - Add title and description
-   - Set access code (or auto-generate)
-   - Set time limit in minutes (0 for no limit)
-5. **Add Questions**: Create questions with 4 options and mark correct answer
-6. **View Results**: Click "View All Results" to see analytics dashboard
-   - View all quiz attempts with scores
-   - Filter by quiz or search by name/email/roll number
-   - Export data to CSV
-   - See statistics and performance metrics
-7. Share the access code with users who should take the quiz
-
-### For Users (No Sign-In Required!)
-
-1. Visit the home page to see available quizzes
-2. Click on a quiz you want to take
-3. Enter the **access code** provided by your instructor/admin
-4. Provide your information:
-   - Full Name
-   - Email Address
-   - Roll Number / Student ID
-5. **Start Quiz** - Timer starts automatically if quiz has time limit
-6. Answer all questions with smooth navigation
-   - Live countdown timer shows remaining time (if applicable)
-   - Timer changes color when time is running low
-7. Submit quiz or wait for auto-submission when time expires
-8. See instant results with percentage score
-9. Retake anytime if needed!
-
-## Project Structure
+## 📦 Project Structure
 
 ```
-├── app/
-│   ├── api/              # API routes
-│   ├── admin/            # Admin dashboard pages
-│   ├── auth/             # Authentication pages
-│   ├── dashboard/        # User dashboard
-│   ├── quiz/             # Quiz taking pages
-│   ├── globals.css       # Global styles
-│   ├── layout.tsx        # Root layout
-│   ├── page.tsx          # Home page
-│   └── providers.tsx     # Context providers
-├── components/           # Reusable components
-├── lib/                  # Utility functions
-├── types/                # TypeScript types
-└── public/               # Static assets
+quizo/
+├── app/                      # Next.js App Router
+│   ├── api/                  # API routes
+│   │   ├── auth/            # Authentication endpoints
+│   │   ├── quizzes/         # Quiz CRUD operations
+│   │   ├── questions/       # Question management
+│   │   ├── attempts/        # Quiz attempts
+│   │   └── user/            # User profile management
+│   ├── admin/               # Admin dashboard
+│   ├── auth/                # Authentication pages
+│   ├── browse/              # Browse quizzes
+│   ├── create-quiz/         # Quiz creation
+│   ├── dashboard/           # User dashboard
+│   ├── leaderboards/        # Leaderboards
+│   ├── my-quizzes/          # User's quizzes
+│   ├── onboarding/          # User onboarding
+│   └── quiz/                # Quiz taking interface
+├── components/              # Reusable components
+│   ├── AnimatedBackground.tsx
+│   ├── Footer.tsx
+│   ├── Navbar.tsx
+│   └── ThemeProvider.tsx
+├── lib/                     # Utility functions
+│   ├── auth.ts             # NextAuth configuration
+│   └── mongodb.ts          # MongoDB connection
+├── public/                  # Static assets
+├── .env.local              # Environment variables
+├── tailwind.config.js      # Tailwind configuration
+└── package.json            # Dependencies
+
 ```
 
-## Features in Detail
+## 🔑 Environment Variables
 
-### Admin Features
-- Create unlimited quizzes with custom or auto-generated access codes
-- **Timer Management** - Set time limits (in minutes) for each quiz
-- Add questions with multiple choice options
-- Mark correct answers
-- View all quizzes with their access codes and time limits
-- **Results Dashboard** - View all quiz attempts with detailed analytics
-- Filter results by quiz or search by name/email/roll number
-- Export results to CSV for further analysis
-- View statistics: total attempts, average scores, unique users
-- Secure email/password authentication
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `MONGODB_URI` | MongoDB connection string | Yes |
+| `NEXTAUTH_URL` | Application URL | Yes |
+| `NEXTAUTH_SECRET` | Secret for JWT encryption | Yes |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | Yes |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | Yes |
+| `ADMIN_EMAIL` | Admin email for login | Optional |
+| `ADMIN_PASSWORD` | Admin password | Optional |
 
-### User Features
-- No sign-in required - completely open access
-- Browse available quizzes on home page
-- Enter quiz access code to unlock quiz
-- Provide personal information (name, email, roll number) before starting
-- **Live Timer** - See countdown timer during timed quizzes
-- Automatic submission when time expires
-- Take quizzes with smooth navigation
-- See instant results with percentage scores
-- Retake quizzes anytime
-
-### UI/UX Features
-- Animated gradient backgrounds
-- Smooth page transitions
-- Dark/light mode toggle
-- Responsive design
-- Loading states
-- Progress indicators
-
-## Deployment
+## 🚢 Deployment
 
 ### Deploy to Vercel
 
-1. Push your code to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Add environment variables in Vercel dashboard:
-   - `MONGODB_URI`
-   - `NEXTAUTH_URL` (your production URL)
-   - `NEXTAUTH_SECRET`
-   - `ADMIN_EMAIL`
-   - `ADMIN_PASSWORD`
-4. Deploy!
+1. **Push to GitHub**
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
 
-## License
+2. **Import to Vercel**
+- Go to [Vercel](https://vercel.com)
+- Click "New Project"
+- Import your GitHub repository
+- Add environment variables
+- Deploy!
 
-MIT License - feel free to use this project for learning or production.
+3. **Update Google OAuth**
+- Add your Vercel URL to authorized redirect URIs
+- Format: `https://your-app.vercel.app/api/auth/callback/google`
+
+## 🛡️ Security
+
+- All API routes are protected with authentication
+- Passwords are hashed with bcrypt
+- JWT tokens for session management
+- Environment variables for sensitive data
+- CORS protection on API routes
+- Input validation and sanitization
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Satyam Singh**
+- GitHub: [@satyamsingh5512](https://github.com/satyamsingh5512)
+- Email: ss2628681@gmail.com
+
+## 🙏 Acknowledgments
+
+- Next.js team for the amazing framework
+- Vercel for hosting
+- MongoDB for the database
+- All contributors and users
+
+## 📞 Support
+
+For support, email ss2628681@gmail.com or open an issue on GitHub.
 
 ---
 
-**Made with ❤️ by Satym**
-# Trigger redeploy
+Made with ❤️ by Satyam Singh
