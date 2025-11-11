@@ -82,9 +82,16 @@ export default function BrowsePage() {
                 className="rounded-3xl border border-white/40 bg-white/80 p-6 backdrop-blur-lg transition hover:shadow-xl dark:border-white/10 dark:bg-gray-900/80"
               >
                 <h3 className="text-xl font-bold mb-2">{quiz.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
                   {quiz.description}
                 </p>
+                {(quiz.college || quiz.clubName) && (
+                  <p className="text-sm text-blue-600 dark:text-blue-400 mb-3">
+                    {quiz.college && quiz.clubName
+                      ? `${quiz.college} • ${quiz.clubName}`
+                      : quiz.college || quiz.clubName}
+                  </p>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">
                     {quiz.questionCount || 0} questions

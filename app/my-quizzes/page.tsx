@@ -90,9 +90,16 @@ export default function MyQuizzesPage() {
                 className="rounded-3xl border border-white/40 bg-white/80 p-6 backdrop-blur-lg dark:border-white/10 dark:bg-gray-900/80"
               >
                 <h3 className="text-xl font-bold mb-2">{quiz.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                <p className="text-gray-600 dark:text-gray-300 mb-2 line-clamp-2">
                   {quiz.description}
                 </p>
+                {quiz.accessCode && (
+                  <div className="mb-3 inline-block rounded-lg bg-blue-100 dark:bg-blue-900/30 px-3 py-1">
+                    <span className="text-xs font-semibold text-blue-800 dark:text-blue-300">
+                      Code: {quiz.accessCode}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-sm mb-4">
                   <span className="text-gray-500">
                     {quiz.participantCount || 0} participants

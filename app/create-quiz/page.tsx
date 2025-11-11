@@ -13,6 +13,7 @@ export default function CreateQuizPage() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [accessCode, setAccessCode] = useState('');
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +65,7 @@ export default function CreateQuizPage() {
       const quizRes = await fetch('/api/quizzes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description }),
+        body: JSON.stringify({ title, description, accessCode }),
       });
 
       if (!quizRes.ok) {
@@ -149,6 +150,23 @@ export default function CreateQuizPage() {
                     rows={3}
                     required
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Access Code <span className="text-gray-400 text-xs">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={accessCode}
+                    onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800"
+                    placeholder="e.g., QUIZ2024 (leave empty for auto-generated)"
+                    maxLength={10}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Students will need this code to access the quiz
+                  </p>
                 </div>
               </div>
             </div>

@@ -139,9 +139,16 @@ export default function DashboardPage() {
                   className="rounded-2xl border border-gray-200 bg-white p-6 transition hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
                 >
                   <h3 className="text-lg font-semibold mb-2">{quiz.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                     {quiz.description}
                   </p>
+                  {quiz.accessCode && (
+                    <div className="mb-3 inline-block rounded bg-blue-100 dark:bg-blue-900/30 px-2 py-1">
+                      <span className="text-xs font-semibold text-blue-800 dark:text-blue-300">
+                        Code: {quiz.accessCode}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">
                       {quiz.participantCount || 0} participants

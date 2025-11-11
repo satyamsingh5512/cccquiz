@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db('quizdb');
 
-    // Get user from database to get their _id
+    // Get user from database to get their _id and college info
     const user = await db.collection('users').findOne({ email: session.user.email });
     
     if (!user) {
@@ -45,6 +45,9 @@ export async function POST(req: NextRequest) {
       description: body.description,
       createdBy: session.user.email,
       creatorId: user._id,
+      creatorName: user.name || 'Anonymous',
+      college: user.college || '',
+      clubName: user.clubName || '',
       createdAt: new Date(),
       isActive: true,
       accessCode: body.accessCode || Math.random().toString(36).substring(2, 8).toUpperCase(),
