@@ -79,17 +79,17 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {session?.user?.isAdmin ? (
+            {session ? (
               <div className="flex items-center gap-2">
                 <Link
-                  href="/admin"
-                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-purple-500/50 px-4 py-2 text-sm font-semibold text-purple-600 transition hover:border-purple-500 hover:bg-purple-50 dark:text-purple-300 dark:hover:bg-purple-500/10"
+                  href="/dashboard"
+                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-blue-500/50 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:border-blue-500 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-blue-500/10"
                 >
-                  <Shield size={16} />
-                  Admin
+                  <Home size={16} />
+                  Dashboard
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:shadow-blue-500/50"
                 >
                   <LogOut size={16} />
@@ -102,7 +102,7 @@ export default function Navbar() {
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition hover:shadow-purple-500/50"
               >
                 <Shield size={16} />
-                Admin Access
+                Login
               </Link>
             )}
 
