@@ -40,14 +40,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
         <div className="flex h-14 sm:h-16 items-center justify-between gap-2">
           <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            <div className="relative h-9 w-9 sm:h-11 sm:w-11 overflow-hidden rounded-xl border border-white/40 bg-gradient-to-br from-blue-500 to-purple-600 shadow-md shadow-blue-500/20 backdrop-blur dark:border-white/10">
+            <div className="relative h-9 w-9 sm:h-11 sm:w-11 overflow-hidden rounded-xl border border-white/40 bg-white shadow-md shadow-blue-500/20 backdrop-blur dark:border-white/10 dark:bg-gray-900">
               <motion.div
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolute inset-0 flex items-center justify-center p-1"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
               >
-                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                <Image
+                  src="/logo.png"
+                  alt="Quizo Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                />
               </motion.div>
             </div>
             <div className="hidden xs:block">

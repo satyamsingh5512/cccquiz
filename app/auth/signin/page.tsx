@@ -4,6 +4,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { motion } from 'framer-motion';
 import { Lock, Mail, Chrome } from 'lucide-react';
@@ -57,8 +58,14 @@ export default function SignIn() {
         className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-3xl shadow-2xl p-12 max-w-md w-full mx-4"
       >
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-3xl">CC</span>
+          <div className="w-20 h-20 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center mx-auto mb-4 p-2 border border-gray-200 dark:border-gray-700">
+            <Image
+              src="/logo.png"
+              alt="Quizo Logo"
+              width={80}
+              height={80}
+              className="object-contain"
+            />
           </div>
           <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Admin Login
