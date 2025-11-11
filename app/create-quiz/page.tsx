@@ -14,6 +14,10 @@ export default function CreateQuizPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [accessCode, setAccessCode] = useState('');
+  const [timerType, setTimerType] = useState<'none' | 'whole' | 'perQuestion'>('none');
+  const [wholeQuizTime, setWholeQuizTime] = useState(10);
+  const [perQuestionTime, setPerQuestionTime] = useState(30);
+  const [allowSkip, setAllowSkip] = useState(true);
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -65,7 +69,15 @@ export default function CreateQuizPage() {
       const quizRes = await fetch('/api/quizzes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, accessCode }),
+        body: JSON.stringify({ 
+          title, 
+          description, 
+          accessCode,
+          timerType,
+          timeLimit: timerType === 'whole' ? wholeQuizTime : 0,
+          perQuestionTime: timerType === 'perQuestion' ? perQuestionTime : 0,
+          allowSkip,
+        }),
       });
 
       if (!quizRes.ok) {
@@ -167,6 +179,146 @@ export default function CreateQuizPage() {
                   <p className="text-xs text-gray-500 mt-1">
                     Students will need this code to access the quiz
                   </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Timer Configuration */}
+            <div className="rounded-3xl border border-white/40 bg-white/80 p-8 backdrop-blur-lg dark:border-white/10 dark:bg-gray-900/80">
+              <h3 className="text-lg font-semibold mb-4">Timer Settings</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-3">Timer Type</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setTimerType('none')}
+                      className={`p-4 rounded-lg border-2 transition ${
+                        timerType === 'none'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                      }`}
+                    >
+                      <div className="font-semibold">No Timer</div>
+                      <div className="text-xs text-gray-500 mt-1">Unlimited time</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTimerType('whole')}
+                      className={`p-4 rounded-lg border-2 transition ${
+                        timerType === 'whole'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                      }`}
+                    >
+                      <div className="font-semibold">Whole Quiz</div>
+                      <div className="text-xs text-gray-500 mt-1">Total time limit</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTimerType('perQuestion')}
+                      className={`p-4 rounded-lg border-2 transition ${
+                        timerType === 'perQuestion'
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30'
+                          : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                      }`}
+                    >
+                      <div className="font-semibold">Per Question</div>
+                      <div className="text-xs text-gray-500 mt-1">Time per question</div>
+                    </button>
+                  </div>
+                </div>
+
+                {timerType === 'whole' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Total Quiz Time (minutes)
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {[5, 10, 15, 20, 30, 45, 60].map((time) => (
+                        <button
+                          key={time}
+                          type="button"
+                          onClick={() => setWholeQuizTime(time)}
+                          className={`px-4 py-2 rounded-lg border transition ${
+                            wholeQuizTime === time
+                              ? 'border-blue-500 bg-blue-500 text-white'
+                              : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                          }`}
+                        >
+                          {time} min
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="number"
+                      value={wholeQuizTime}
+                      onChange={(e) => setWholeQuizTime(parseInt(e.target.value) || 10)}
+                      min="1"
+                      max="180"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800"
+                      placeholder="Custom time in minutes"
+                    />
+                  </div>
+                )}
+
+                {timerType === 'perQuestion' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Time Per Question (seconds)
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {[15, 30, 45, 60, 90, 120].map((time) => (
+                        <button
+                          key={time}
+                          type="button"
+                          onClick={() => setPerQuestionTime(time)}
+                          className={`px-4 py-2 rounded-lg border transition ${
+                            perQuestionTime === time
+                              ? 'border-blue-500 bg-blue-500 text-white'
+                              : 'border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                          }`}
+                        >
+                          {time}s
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="number"
+                      value={perQuestionTime}
+                      onChange={(e) => setPerQuestionTime(parseInt(e.target.value) || 30)}
+                      min="5"
+                      max="300"
+                      className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800"
+                      placeholder="Custom time in seconds"
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      ⚠️ Questions will auto-advance when time expires (unanswered questions marked as skipped)
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                  <div>
+                    <div className="font-medium">Allow Question Skipping</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Students can skip questions and return later
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAllowSkip(!allowSkip)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                      allowSkip ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                        allowSkip ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
             </div>

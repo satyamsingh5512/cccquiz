@@ -51,7 +51,10 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
       isActive: true,
       accessCode: body.accessCode || Math.random().toString(36).substring(2, 8).toUpperCase(),
+      timerType: body.timerType || 'none',
       timeLimit: body.timeLimit || 0,
+      perQuestionTime: body.perQuestionTime || 0,
+      allowSkip: body.allowSkip !== undefined ? body.allowSkip : true,
       questionCount: 0,
       participantCount: 0,
     };

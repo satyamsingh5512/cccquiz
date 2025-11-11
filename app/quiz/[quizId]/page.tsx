@@ -27,6 +27,8 @@ export default function TakeQuizPage() {
   const [codeError, setCodeError] = useState('');
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerExpired, setTimerExpired] = useState(false);
+  const [questionTimeLeft, setQuestionTimeLeft] = useState<number | null>(null);
+  const [skippedQuestions, setSkippedQuestions] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (quizId) {
@@ -63,12 +65,32 @@ export default function TakeQuizPage() {
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+      // Reset per-question timer
+      if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
+        setQuestionTimeLeft(quiz.perQuestionTime);
+      }
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
+      // Reset per-question timer
+      if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
+        setQuestionTimeLeft(quiz.perQuestionTime);
+      }
+    }
+  };
+
+  const handleSkip = () => {
+    // Mark question as skipped
+    setSkippedQuestions(prev => new Set(prev).add(currentQuestion));
+    // Move to next question
+    if (currentQuestion < questions.length - 1) {
+      handleNext();
+    } else {
+      // Last question - submit quiz
+      handleSubmit();
     }
   };
 
@@ -129,9 +151,11 @@ export default function TakeQuizPage() {
     e.preventDefault();
     if (userName.trim() && userEmail.trim() && rollNumber.trim()) {
       setShowUserInfoInput(false);
-      // Start timer if quiz has time limit
-      if (quiz?.timeLimit && quiz.timeLimit > 0) {
+      // Start timer based on quiz type
+      if (quiz?.timerType === 'whole' && quiz?.timeLimit && quiz.timeLimit > 0) {
         setTimeLeft(quiz.timeLimit * 60); // Convert minutes to seconds
+      } else if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
+        setQuestionTimeLeft(quiz.perQuestionTime);
       }
       // Enter fullscreen mode
       try {
@@ -165,6 +189,31 @@ export default function TakeQuizPage() {
       handleSubmit();
     }
   }, [timerExpired]);
+
+  // Per-question timer effect
+  useEffect(() => {
+    if (questionTimeLeft === null || questionTimeLeft <= 0 || showResults || showUserInfoInput || showAccessCodeInput) return;
+
+    const timer = setInterval(() => {
+      setQuestionTimeLeft((prev) => {
+        if (prev === null || prev <= 1) {
+          // Time expired for this question - auto-advance
+          handleSkip();
+          return quiz?.perQuestionTime || 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [questionTimeLeft, showResults, showUserInfoInput, showAccessCodeInput, currentQuestion]);
+
+  // Reset per-question timer when question changes
+  useEffect(() => {
+    if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime && !showResults && !showUserInfoInput && !showAccessCodeInput) {
+      setQuestionTimeLeft(quiz.perQuestionTime);
+    }
+  }, [currentQuestion, quiz]);
 
   // Fullscreen monitoring - exit quiz if user leaves fullscreen
   useEffect(() => {
@@ -492,8 +541,23 @@ export default function TakeQuizPage() {
                   <span>{formatTime(timeLeft)}</span>
                 </div>
               )}
+              {questionTimeLeft !== null && (
+                <div
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-mono text-lg font-bold ${
+                    questionTimeLeft < 10
+                      ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 animate-pulse'
+                      : questionTimeLeft < 20
+                      ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
+                      : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                  }`}
+                >
+                  <Clock size={20} />
+                  <span>{questionTimeLeft}s</span>
+                </div>
+              )}
               <div className="text-sm text-gray-500">
                 {Object.keys(answers).length} / {questions.length} answered
+                {skippedQuestions.size > 0 && ` • ${skippedQuestions.size} skipped`}
               </div>
             </div>
           </div>
@@ -545,7 +609,7 @@ export default function TakeQuizPage() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center gap-4">
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
@@ -555,23 +619,35 @@ export default function TakeQuizPage() {
             <span>Previous</span>
           </button>
 
-          {currentQuestion === questions.length - 1 ? (
-            <button
-              onClick={handleSubmit}
-              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition"
-            >
-              <CheckCircle size={20} />
-              <span>Submit Quiz</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleNext}
-              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
-            >
-              <span>Next</span>
-              <ArrowRight size={20} />
-            </button>
-          )}
+          <div className="flex gap-3">
+            {quiz?.allowSkip && currentQuestion < questions.length - 1 && (
+              <button
+                onClick={handleSkip}
+                className="flex items-center space-x-2 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition"
+              >
+                <span>Skip</span>
+                <ArrowRight size={20} />
+              </button>
+            )}
+
+            {currentQuestion === questions.length - 1 ? (
+              <button
+                onClick={handleSubmit}
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition"
+              >
+                <CheckCircle size={20} />
+                <span>Submit Quiz</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
+              >
+                <span>Next</span>
+                <ArrowRight size={20} />
+              </button>
+            )}
+          </div>
         </div>
       </main>
     </div>
