@@ -88,6 +88,15 @@ export default function TakeQuizPage() {
     setScore(correctCount);
     setShowResults(true);
 
+    // Exit fullscreen when showing results
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch (error) {
+        console.error('Error exiting fullscreen:', error);
+      }
+    }
+
     await fetch('/api/attempts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -116,13 +125,19 @@ export default function TakeQuizPage() {
     }
   };
 
-  const handleStartQuiz = (e: React.FormEvent) => {
+  const handleStartQuiz = async (e: React.FormEvent) => {
     e.preventDefault();
     if (userName.trim() && userEmail.trim() && rollNumber.trim()) {
       setShowUserInfoInput(false);
       // Start timer if quiz has time limit
       if (quiz?.timeLimit && quiz.timeLimit > 0) {
         setTimeLeft(quiz.timeLimit * 60); // Convert minutes to seconds
+      }
+      // Enter fullscreen mode
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (error) {
+        console.error('Error entering fullscreen:', error);
       }
     }
   };
@@ -150,6 +165,31 @@ export default function TakeQuizPage() {
       handleSubmit();
     }
   }, [timerExpired]);
+
+  // Fullscreen monitoring - exit quiz if user leaves fullscreen
+  useEffect(() => {
+    if (showUserInfoInput || showAccessCodeInput || showResults) return;
+
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement && !showResults) {
+        // User exited fullscreen - auto-submit and show warning
+        alert('You exited fullscreen mode. The quiz will be submitted automatically.');
+        handleSubmit();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, [showUserInfoInput, showAccessCodeInput, showResults]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -272,6 +312,15 @@ export default function TakeQuizPage() {
                 </span>
               </div>
             )}
+            <div className="mt-4 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+              <div className="flex items-start space-x-2 text-orange-800 dark:text-orange-300">
+                <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+                <div className="text-sm">
+                  <p className="font-semibold mb-1">Important:</p>
+                  <p>The quiz will start in fullscreen mode. Exiting fullscreen will automatically submit your quiz.</p>
+                </div>
+              </div>
+            </div>
           </div>
           <form onSubmit={handleStartQuiz} className="space-y-4">
             <input
@@ -407,23 +456,23 @@ export default function TakeQuizPage() {
   const question = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       <AnimatedBackground />
-      <Navbar />
       
-  <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
+      {/* Fullscreen Warning Banner */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 text-center text-sm font-semibold shadow-lg">
+        <div className="flex items-center justify-center gap-2">
+          <AlertCircle size={16} />
+          <span>⚠️ Fullscreen Mode Active - Exiting fullscreen will automatically submit your quiz</span>
+        </div>
+      </div>
+      
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <button
-            onClick={() => router.push('/')}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 mb-4"
-          >
-            <ArrowLeft size={20} />
-            <span>Back to Home</span>
-          </button>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">
               Question {currentQuestion + 1} of {questions.length}
