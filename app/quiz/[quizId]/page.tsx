@@ -53,9 +53,15 @@ export default function TakeQuizPage() {
   };
 
   const fetchQuestions = async () => {
-    const res = await fetch(`/api/questions/${quizId}`);
-    const data = await res.json();
-    setQuestions(data);
+    try {
+      const res = await fetch(`/api/questions/${quizId}`);
+      const data = await res.json();
+      console.log('Fetched questions:', data);
+      setQuestions(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      setQuestions([]);
+    }
   };
 
   const handleAnswer = (questionId: string, answerIndex: number) => {
