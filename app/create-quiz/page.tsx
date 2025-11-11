@@ -51,6 +51,12 @@ export default function CreateQuizPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (questions.length === 0) {
+      alert('Please add at least one question');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -61,26 +67,36 @@ export default function CreateQuizPage() {
         body: JSON.stringify({ title, description }),
       });
 
-      if (!quizRes.ok) throw new Error('Failed to create quiz');
+      if (!quizRes.ok) {
+        const error = await quizRes.json();
+        throw new Error(error.error || 'Failed to create quiz');
+      }
 
       const quiz = await quizRes.json();
 
       // Add questions
       for (const q of questions) {
-        await fetch('/api/questions', {
+        const questionRes = await fetch('/api/questions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             quizId: quiz._id,
-            ...q,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
           }),
         });
+
+        if (!questionRes.ok) {
+          console.error('Failed to add question:', q.question);
+        }
       }
 
-      router.push('/dashboard');
+      alert('Quiz created successfully!');
+      router.push('/my-quizzes');
     } catch (error) {
       console.error('Error creating quiz:', error);
-      alert('Failed to create quiz. Please try again.');
+      alert(error instanceof Error ? error.message : 'Failed to create quiz. Please try again.');
     } finally {
       setLoading(false);
     }

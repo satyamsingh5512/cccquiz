@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.isAdmin) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -33,20 +33,31 @@ export async function POST(req: NextRequest) {
     const client = await clientPromise;
     const db = client.db('quizdb');
 
+    // Get user from database to get their _id
+    const user = await db.collection('users').findOne({ email: session.user.email });
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const quiz = {
       title: body.title,
       description: body.description,
       createdBy: session.user.email,
+      creatorId: user._id,
       createdAt: new Date(),
       isActive: true,
       accessCode: body.accessCode || Math.random().toString(36).substring(2, 8).toUpperCase(),
       timeLimit: body.timeLimit || 0,
+      questionCount: 0,
+      participantCount: 0,
     };
 
     const result = await db.collection('quizzes').insertOne(quiz);
 
     return NextResponse.json({ ...quiz, _id: result.insertedId });
   } catch (error) {
+    console.error('Error creating quiz:', error);
     return NextResponse.json({ error: 'Failed to create quiz' }, { status: 500 });
   }
 }
