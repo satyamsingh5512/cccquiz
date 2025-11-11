@@ -12,6 +12,25 @@
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
   }
+
+  /* Ensure proper scaling on zoom */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent horizontal scroll on zoom */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
 }
 
 @layer utilities {
@@ -42,4 +61,57 @@
 
 body {
   @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Responsive container utilities */
+@layer utilities {
+  .container-responsive {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .container-responsive {
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container-responsive {
+      max-width: 768px;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-responsive {
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-responsive {
+      max-width: 1280px;
+    }
+  }
+
+  /* Ensure images and media scale properly */
+  img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent text overflow */
+  .text-responsive {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
 }
