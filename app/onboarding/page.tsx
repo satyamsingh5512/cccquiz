@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 import { Building2, User, Users } from 'lucide-react';
 
 export default function OnboardingPage() {
-  const { data: session, update } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [name, setName] = useState('');
   const [college, setCollege] = useState('');
@@ -16,12 +16,14 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.organization) {
-      router.push('/dashboard');
-    }
     // Pre-fill name from Google OAuth
     if (session?.user?.name) {
       setName(session.user.name);
+    }
+    
+    // Redirect to dashboard if organization is already set
+    if (session?.user?.organization && session.user.organization !== '') {
+      router.push('/dashboard');
     }
   }, [session, router]);
 
@@ -41,15 +43,39 @@ export default function OnboardingPage() {
       });
 
       if (res.ok) {
+        // Update the session
         await update();
-        router.push('/dashboard');
+        // Small delay to ensure session is updated
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 500);
+      } else {
+        const data = await res.json();
+        console.error('Error updating profile:', data);
+        alert('Failed to update profile. Please try again.');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-    } finally {
+      alert('An error occurred. Please try again.');
       setLoading(false);
     }
   };
+
+  // Show loading while checking session
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  // Redirect to signin if not authenticated
+  if (status === 'unauthenticated') {
+    router.push('/auth/signin');
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

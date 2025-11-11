@@ -20,7 +20,7 @@ export default function DashboardPage() {
       router.push('/auth/signin');
     } else if (session?.user?.isAdmin) {
       router.push('/admin');
-    } else if (session && !session.user?.organization) {
+    } else if (session && (!session.user?.organization || session.user.organization === '')) {
       router.push('/onboarding');
     }
   }, [status, session, router]);
