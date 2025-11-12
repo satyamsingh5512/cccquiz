@@ -6,19 +6,8 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Quizo - Interactive Quiz Platform',
-  description: 'Modern quiz platform for interactive assessments',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
-  icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
-  },
+  title: 'Cloud Computing Club - Quiz Platform',
+  description: 'Modern quiz platform for the Cloud Computing Club',
 };
 
 export default function RootLayout({

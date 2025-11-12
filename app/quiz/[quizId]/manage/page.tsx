@@ -56,9 +56,11 @@ export default function ManageQuizPage() {
       const questionsData = questionsRes.ok ? await questionsRes.json() : [];
       const attemptsData = attemptsRes.ok ? await attemptsRes.json() : [];
 
-      console.log('Quiz data:', quizData);
-      console.log('Questions:', questionsData);
-      console.log('Attempts:', attemptsData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Quiz data:', quizData);
+        console.log('Questions:', questionsData);
+        console.log('Attempts:', attemptsData);
+      }
 
       setQuiz(quizData);
       setQuestions(Array.isArray(questionsData) ? questionsData : []);

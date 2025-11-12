@@ -27,8 +27,6 @@ export default function TakeQuizPage() {
   const [codeError, setCodeError] = useState('');
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [timerExpired, setTimerExpired] = useState(false);
-  const [questionTimeLeft, setQuestionTimeLeft] = useState<number | null>(null);
-  const [skippedQuestions, setSkippedQuestions] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     if (quizId) {
@@ -53,15 +51,9 @@ export default function TakeQuizPage() {
   };
 
   const fetchQuestions = async () => {
-    try {
-      const res = await fetch(`/api/questions/${quizId}`);
-      const data = await res.json();
-      console.log('Fetched questions:', data);
-      setQuestions(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-      setQuestions([]);
-    }
+    const res = await fetch(`/api/questions/${quizId}`);
+    const data = await res.json();
+    setQuestions(data);
   };
 
   const handleAnswer = (questionId: string, answerIndex: number) => {
@@ -71,32 +63,12 @@ export default function TakeQuizPage() {
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-      // Reset per-question timer
-      if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
-        setQuestionTimeLeft(quiz.perQuestionTime);
-      }
     }
   };
 
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
-      // Reset per-question timer
-      if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
-        setQuestionTimeLeft(quiz.perQuestionTime);
-      }
-    }
-  };
-
-  const handleSkip = () => {
-    // Mark question as skipped
-    setSkippedQuestions(prev => new Set(prev).add(currentQuestion));
-    // Move to next question
-    if (currentQuestion < questions.length - 1) {
-      handleNext();
-    } else {
-      // Last question - submit quiz
-      handleSubmit();
     }
   };
 
@@ -115,15 +87,6 @@ export default function TakeQuizPage() {
 
     setScore(correctCount);
     setShowResults(true);
-
-    // Exit fullscreen when showing results
-    if (document.fullscreenElement) {
-      try {
-        await document.exitFullscreen();
-      } catch (error) {
-        console.error('Error exiting fullscreen:', error);
-      }
-    }
 
     await fetch('/api/attempts', {
       method: 'POST',
@@ -153,21 +116,13 @@ export default function TakeQuizPage() {
     }
   };
 
-  const handleStartQuiz = async (e: React.FormEvent) => {
+  const handleStartQuiz = (e: React.FormEvent) => {
     e.preventDefault();
     if (userName.trim() && userEmail.trim() && rollNumber.trim()) {
       setShowUserInfoInput(false);
-      // Start timer based on quiz type
-      if (quiz?.timerType === 'whole' && quiz?.timeLimit && quiz.timeLimit > 0) {
+      // Start timer if quiz has time limit
+      if (quiz?.timeLimit && quiz.timeLimit > 0) {
         setTimeLeft(quiz.timeLimit * 60); // Convert minutes to seconds
-      } else if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime) {
-        setQuestionTimeLeft(quiz.perQuestionTime);
-      }
-      // Enter fullscreen mode
-      try {
-        await document.documentElement.requestFullscreen();
-      } catch (error) {
-        console.error('Error entering fullscreen:', error);
       }
     }
   };
@@ -195,56 +150,6 @@ export default function TakeQuizPage() {
       handleSubmit();
     }
   }, [timerExpired]);
-
-  // Per-question timer effect
-  useEffect(() => {
-    if (questionTimeLeft === null || questionTimeLeft <= 0 || showResults || showUserInfoInput || showAccessCodeInput) return;
-
-    const timer = setInterval(() => {
-      setQuestionTimeLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          // Time expired for this question - auto-advance
-          handleSkip();
-          return quiz?.perQuestionTime || 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [questionTimeLeft, showResults, showUserInfoInput, showAccessCodeInput, currentQuestion]);
-
-  // Reset per-question timer when question changes
-  useEffect(() => {
-    if (quiz?.timerType === 'perQuestion' && quiz?.perQuestionTime && !showResults && !showUserInfoInput && !showAccessCodeInput) {
-      setQuestionTimeLeft(quiz.perQuestionTime);
-    }
-  }, [currentQuestion, quiz]);
-
-  // Fullscreen monitoring - exit quiz if user leaves fullscreen
-  useEffect(() => {
-    if (showUserInfoInput || showAccessCodeInput || showResults) return;
-
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement && !showResults) {
-        // User exited fullscreen - auto-submit and show warning
-        alert('You exited fullscreen mode. The quiz will be submitted automatically.');
-        handleSubmit();
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
-    };
-  }, [showUserInfoInput, showAccessCodeInput, showResults]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -367,15 +272,6 @@ export default function TakeQuizPage() {
                 </span>
               </div>
             )}
-            <div className="mt-4 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
-              <div className="flex items-start space-x-2 text-orange-800 dark:text-orange-300">
-                <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-semibold mb-1">Important:</p>
-                  <p>The quiz will start in fullscreen mode. Exiting fullscreen will automatically submit your quiz.</p>
-                </div>
-              </div>
-            </div>
           </div>
           <form onSubmit={handleStartQuiz} className="space-y-4">
             <input
@@ -511,23 +407,23 @@ export default function TakeQuizPage() {
   const question = questions[currentQuestion];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen">
       <AnimatedBackground />
+      <Navbar />
       
-      {/* Fullscreen Warning Banner */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 text-center text-sm font-semibold shadow-lg">
-        <div className="flex items-center justify-center gap-2">
-          <AlertCircle size={16} />
-          <span>⚠️ Fullscreen Mode Active - Exiting fullscreen will automatically submit your quiz</span>
-        </div>
-      </div>
-      
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+  <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 mb-4"
+          >
+            <ArrowLeft size={20} />
+            <span>Back to Home</span>
+          </button>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold">
               Question {currentQuestion + 1} of {questions.length}
@@ -547,23 +443,8 @@ export default function TakeQuizPage() {
                   <span>{formatTime(timeLeft)}</span>
                 </div>
               )}
-              {questionTimeLeft !== null && (
-                <div
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-mono text-lg font-bold ${
-                    questionTimeLeft < 10
-                      ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 animate-pulse'
-                      : questionTimeLeft < 20
-                      ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
-                      : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                  }`}
-                >
-                  <Clock size={20} />
-                  <span>{questionTimeLeft}s</span>
-                </div>
-              )}
               <div className="text-sm text-gray-500">
                 {Object.keys(answers).length} / {questions.length} answered
-                {skippedQuestions.size > 0 && ` • ${skippedQuestions.size} skipped`}
               </div>
             </div>
           </div>
@@ -615,7 +496,7 @@ export default function TakeQuizPage() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="flex justify-between items-center gap-4">
+        <div className="flex justify-between">
           <button
             onClick={handlePrevious}
             disabled={currentQuestion === 0}
@@ -625,35 +506,23 @@ export default function TakeQuizPage() {
             <span>Previous</span>
           </button>
 
-          <div className="flex gap-3">
-            {quiz?.allowSkip && currentQuestion < questions.length - 1 && (
-              <button
-                onClick={handleSkip}
-                className="flex items-center space-x-2 px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition"
-              >
-                <span>Skip</span>
-                <ArrowRight size={20} />
-              </button>
-            )}
-
-            {currentQuestion === questions.length - 1 ? (
-              <button
-                onClick={handleSubmit}
-                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition"
-              >
-                <CheckCircle size={20} />
-                <span>Submit Quiz</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleNext}
-                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
-              >
-                <span>Next</span>
-                <ArrowRight size={20} />
-              </button>
-            )}
-          </div>
+          {currentQuestion === questions.length - 1 ? (
+            <button
+              onClick={handleSubmit}
+              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition"
+            >
+              <CheckCircle size={20} />
+              <span>Submit Quiz</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleNext}
+              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition"
+            >
+              <span>Next</span>
+              <ArrowRight size={20} />
+            </button>
+          )}
         </div>
       </main>
     </div>

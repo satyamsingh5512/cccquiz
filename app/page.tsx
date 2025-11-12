@@ -161,7 +161,7 @@ export default function Home() {
         >
           <div className="space-y-8">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-white/60 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-blue-600 shadow-sm backdrop-blur dark:bg-gray-900/60 dark:text-blue-300">
-              <Sparkles size={14} /> Quizo
+              <Sparkles size={14} /> Cloud Computing Club
             </span>
             <h1 className="text-4xl font-black leading-tight tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
               Elevate learning with immersive, data-driven quiz experiences.
@@ -171,10 +171,10 @@ export default function Home() {
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
-                onClick={() => router.push('/auth/signup')}
+                onClick={() => router.push('/auth/signin')}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition hover:shadow-purple-500/50"
               >
-                Get Started Free
+                Launch Admin Console
                 <ArrowRight size={16} />
               </button>
               <a
@@ -367,24 +367,24 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="mt-28 rounded-3xl border border-white/40 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-10 text-center text-white shadow-2xl shadow-blue-500/30 backdrop-blur"
         >
-          <h2 className="text-3xl font-semibold">Ready to create your first quiz?</h2>
+          <h2 className="text-3xl font-semibold">Ready to host impactful quiz sessions?</h2>
           <p className="mt-3 text-sm text-blue-100">
-            Join thousands of educators and organizations creating engaging quizzes with Quizo.
+            Empower your community with engaging assessments, modern analytics, and a delightful experience across every screen size.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
-              onClick={() => router.push('/auth/signup')}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-            >
-              Sign Up Free
-              <ArrowRight size={16} />
-            </button>
-            <button
-              onClick={() => router.push('/auth/signin')}
+              onClick={() => router.push('/admin')}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-white/70 bg-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/30"
             >
-              Sign In
+              Open Admin Dashboard
+              <ArrowRight size={16} />
             </button>
+            <a
+              href="mailto:ss2628681@gmail.com"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+            >
+              Connect with the team
+            </a>
           </div>
         </motion.section>
       </main>
