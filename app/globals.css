@@ -4,68 +4,136 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 98%;
+    --foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-  }
-
-  /* Ensure proper scaling on zoom */
-  html {
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+    --card: 222.2 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 
   * {
+    @apply border-border;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Prevent horizontal scroll on zoom */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
-    width: 100%;
-    position: relative;
   }
 }
 
 @layer utilities {
-  .animated-gradient {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+  /* Soft gradient utilities */
+  .gradient-subtle {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.05) 0%,
+      rgba(139, 92, 246, 0.05) 100%
+    );
   }
 
-  .animated-gradient-dark {
-    background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+  .dark .gradient-subtle {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(139, 92, 246, 0.1) 100%
+    );
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply backdrop-blur-lg bg-white/80 dark:bg-gray-900/80;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Premium card hover effect */
+  .card-hover {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-0.5 shadow-soft-md;
+  }
+
+  /* Shimmer effect for skeletons */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  .dark .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  /* Focus visible styles */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 0% 50%;
+/* Typography improvements */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
   }
-  50% {
-    background-position: 100% 50%;
+
+  h1 {
+    @apply text-3xl;
   }
-  100% {
-    background-position: 0% 50%;
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
   }
 }
 
-body {
-  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-
-/* Responsive container utilities */
+/* Responsive container */
 @layer utilities {
   .container-responsive {
     width: 100%;
@@ -102,16 +170,9 @@ body {
     }
   }
 
-  /* Ensure images and media scale properly */
-  img, video, canvas, svg {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Prevent text overflow */
-  .text-responsive {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+  @media (min-width: 1536px) {
+    .container-responsive {
+      max-width: 1440px;
+    }
   }
 }

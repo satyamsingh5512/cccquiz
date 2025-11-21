@@ -4,145 +4,258 @@ import { useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from './ThemeProvider';
-import { Moon, Sun, LogOut, Shield, Home, Sparkles } from 'lucide-react';
-
-const navVariants = {
-  hidden: { y: -20, opacity: 0 },
-  visible: { y: 0, opacity: 1 },
-};
+import { 
+  Moon, 
+  Sun, 
+  LogOut, 
+  Shield, 
+  LayoutDashboard, 
+  BookOpen,
+  Trophy,
+  User,
+  Menu,
+  X
+} from 'lucide-react';
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
+    const handleScroll = () => setScrolled(window.scrollY > 0);
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navItems = session ? [
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/browse', label: 'Quizzes', icon: BookOpen },
+    { href: '/leaderboards', label: 'Leaderboards', icon: Trophy },
+  ] : [
+    { href: '/#features', label: 'Features', icon: BookOpen },
+    { href: '/browse', label: 'Browse', icon: BookOpen },
+  ];
+
+  const isActive = (href: string) => {
+    if (href.startsWith('/#')) return false;
+    return pathname === href;
+  };
+
   return (
     <motion.nav
-      initial="hidden"
-      animate="visible"
-      variants={navVariants}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
+      initial={{ y: -64, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className={`fixed top-0 inset-x-0 z-50 h-16 transition-all duration-300 ${
         scrolled
-          ? 'backdrop-blur-xl bg-white/70 dark:bg-gray-950/70 shadow-lg shadow-blue-500/5'
-          : 'bg-transparent'
+          ? 'backdrop-blur-lg bg-background/80 border-b border-border shadow-soft'
+          : 'bg-background/50 border-b border-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-white/40 bg-white/80 shadow-md shadow-blue-500/20 backdrop-blur dark:border-white/10 dark:bg-gray-900/70">
-              <motion.div
-                className="absolute inset-0"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.3 }}
-              >
-                <Image
-                  src="https://www.cloudcomputingclub.co.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fclub_logo.edc6af2c.png&w=64&q=75"
-                  alt="Cloud Computing Club logo"
-                  fill
-                  sizes="44px"
-                  priority
-                  className="object-contain p-1"
-                />
-              </motion.div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+        <div className="flex h-full items-center justify-between">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative h-10 w-10 overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-105">
+              <Image
+                src="/logo.png"
+                alt="Quizo"
+                fill
+                sizes="40px"
+                priority
+                className="object-contain"
+              />
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
-                Cloud Computing Club
+              <p className="text-sm font-semibold text-foreground">
+                Quizo
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Quiz Platform
               </p>
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300">
-              <Link
-                href="/"
-                className="rounded-full px-4 py-2 transition hover:bg-blue-50 dark:hover:bg-gray-800"
-              >
-                Home
-              </Link>
-              <Link
-                href="/#features"
-                className="rounded-full px-4 py-2 transition hover:bg-blue-50 dark:hover:bg-gray-800"
-              >
-                Features
-              </Link>
-              <Link
-                href="/#quizzes"
-                className="rounded-full px-4 py-2 transition hover:bg-blue-50 dark:hover:bg-gray-800"
-              >
-                Quizzes
-              </Link>
-            </div>
-
-            {session?.user?.isAdmin ? (
-              <div className="flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
                 <Link
-                  href="/admin"
-                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-purple-500/50 px-4 py-2 text-sm font-semibold text-purple-600 transition hover:border-purple-500 hover:bg-purple-50 dark:text-purple-300 dark:hover:bg-purple-500/10"
+                  key={item.href}
+                  href={item.href}
+                  className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    active
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
                 >
-                  <Shield size={16} />
-                  Admin
+                  <Icon size={16} />
+                  {item.label}
+                  {active && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-primary/10 rounded-lg border border-primary/20"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
                 </Link>
-                <button
-                  onClick={() => signOut()}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:shadow-blue-500/50"
-                >
-                  <LogOut size={16} />
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/auth/signin"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 transition hover:shadow-purple-500/50"
-              >
-                <Shield size={16} />
-                Admin Access
-              </Link>
-            )}
+              );
+            })}
+          </div>
 
+          <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition hover:border-blue-200 hover:text-blue-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-blue-500"
+              className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-ring"
               aria-label="Toggle theme"
             >
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>
 
-            <Link
-              href="/#quizzes"
-              className="hidden lg:inline-flex items-center gap-2 rounded-full border border-blue-500/60 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-500/10"
+            {session ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 h-10 px-3 rounded-lg hover:bg-muted transition-colors focus-ring"
+                >
+                  <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xs font-semibold">
+                    {session.user?.name?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                  <span className="hidden lg:block text-sm font-medium text-foreground">
+                    {session.user?.name}
+                  </span>
+                </button>
+
+                <AnimatePresence>
+                  {userMenuOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setUserMenuOpen(false)}
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-12 z-50 w-56 rounded-xl border border-border bg-card shadow-soft-lg overflow-hidden"
+                      >
+                        <div className="p-3 border-b border-border">
+                          <p className="text-sm font-semibold text-foreground">
+                            {session.user?.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {session.user?.email}
+                          </p>
+                          {session.user?.isAdmin && (
+                            <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-secondary/10 text-secondary text-xs font-medium">
+                              <Shield size={12} />
+                              Admin
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-2">
+                          {session.user?.isAdmin && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-foreground hover:bg-muted transition-colors"
+                            >
+                              <Shield size={16} />
+                              Admin Panel
+                            </Link>
+                          )}
+                          <Link
+                            href="/dashboard"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-foreground hover:bg-muted transition-colors"
+                          >
+                            <User size={16} />
+                            My Profile
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setUserMenuOpen(false);
+                              signOut();
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-error hover:bg-error/10 transition-colors"
+                          >
+                            <LogOut size={16} />
+                            Sign Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                href="/auth/signin"
+                className="h-10 px-6 rounded-lg bg-primary text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all focus-ring inline-flex items-center gap-2"
+              >
+                Sign In
+              </Link>
+            )}
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              aria-label="Toggle menu"
             >
-              <Home size={16} />
-              Explore
-            </Link>
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-white/30 dark:border-white/5">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
-          <span className="flex items-center gap-1">
-            <Sparkles size={14} />
-            Elevate your quiz experience with real-time insights.
-          </span>
-          <Link href="/#features" className="hidden sm:inline text-blue-600 hover:text-blue-500 dark:text-blue-400">
-            Discover what&apos;s new →
-          </Link>
-        </div>
-      </div>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed right-0 top-16 bottom-0 w-64 bg-card border-l border-border z-50 md:hidden overflow-y-auto"
+            >
+              <div className="p-4 space-y-2">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                        active
+                          ? 'text-primary bg-primary/10 border border-primary/20'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }

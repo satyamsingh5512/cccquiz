@@ -6,8 +6,39 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Cloud Computing Club - Quiz Platform',
-  description: 'Modern quiz platform for the Cloud Computing Club',
+  title: 'Quizo - Modern Quiz Platform',
+  description: 'Enterprise-grade quiz platform for institutions and teams. Create, deploy, and analyze assessments at scale.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+  },
+  manifest: '/manifest.json',
+  openGraph: {
+    title: 'Quizo - Modern Quiz Platform',
+    description: 'Enterprise-grade quiz platform for institutions and teams. Create, deploy, and analyze assessments at scale.',
+    type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Quizo - Modern Quiz Platform',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Quizo - Modern Quiz Platform',
+    description: 'Enterprise-grade quiz platform for institutions and teams.',
+    images: ['/logo.png'],
+  },
 };
 
 export default function RootLayout({
