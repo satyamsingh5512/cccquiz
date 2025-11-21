@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -68,6 +69,21 @@ export default function Home() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
 
+  // Memoize static data
+  const stats = useMemo(
+    () => [
+      { label: 'Quizzes completed', value: '10,000+' },
+      { label: 'Active users', value: '2,500+' },
+      { label: 'Avg. completion', value: '94%' },
+    ],
+    []
+  );
+
+  // Memoized quiz click handler
+  const handleQuizClick = useCallback((quizId: string) => {
+    router.push(`/quiz/${quizId}`);
+  }, [router]);
+
   // Rotating text effect
   useEffect(() => {
     const interval = setInterval(() => {
@@ -76,10 +92,16 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch quizzes with abort controller
   useEffect(() => {
+    const controller = new AbortController();
+    
     const fetchQuizzes = async () => {
       try {
-        const res = await fetch('/api/quizzes', { cache: 'no-cache' });
+        const res = await fetch('/api/quizzes', { 
+          cache: 'no-cache',
+          signal: controller.signal 
+        });
         const data = await res.json();
 
         if (!Array.isArray(data)) {
@@ -148,20 +170,9 @@ export default function Home() {
     };
 
     fetchQuizzes();
+    
+    return () => controller.abort();
   }, []);
-
-  const stats = useMemo(
-    () => [
-      { label: 'Quizzes completed', value: '10,000+' },
-      { label: 'Active users', value: '2,500+' },
-      { label: 'Avg. completion', value: '94%' },
-    ],
-    []
-  );
-
-  const handleQuizClick = (quizId: string) => {
-    router.push(`/quiz/${quizId}`);
-  };
 
   return (
     <div className="min-h-screen">
@@ -531,6 +542,7 @@ export default function Home() {
                     alt="Quizo"
                     fill
                     sizes="40px"
+                    loading="lazy"
                     className="object-contain"
                   />
                 </div>

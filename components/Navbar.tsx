@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -20,7 +20,7 @@ import {
   X
 } from 'lucide-react';
 
-export default function Navbar() {
+function Navbar() {
   const { data: session } = useSession();
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
@@ -28,12 +28,29 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  // Optimized scroll handler with throttling
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 0);
+    let rafId: number;
+    const handleScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 0);
+        rafId = 0;
+      });
+    };
     handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+    setUserMenuOpen(false);
+  }, [pathname]);
 
   const navItems = session ? [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -44,10 +61,10 @@ export default function Navbar() {
     { href: '/browse', label: 'Browse', icon: BookOpen },
   ];
 
-  const isActive = (href: string) => {
+  const isActive = useCallback((href: string) => {
     if (href.startsWith('/#')) return false;
     return pathname === href;
-  };
+  }, [pathname]);
 
   return (
     <motion.nav
@@ -63,7 +80,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex h-full items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative h-10 w-10 overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-105">
+            <div className="relative h-10 w-10 overflow-hidden rounded-lg transition-transform duration-200 group-hover:scale-105 will-change-transform">
               <Image
                 src="/logo.png"
                 alt="Quizo"
@@ -259,3 +276,5 @@ export default function Navbar() {
     </motion.nav>
   );
 }
+
+export default memo(Navbar);
